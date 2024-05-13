@@ -42,6 +42,29 @@ function initialize() {
         });
     }
 }
+function getStartingPointForBehaviour(behaviour, particle) {
+    var rect = ctx.canvas.getBoundingClientRect();
+    var position = particle.position;
+    switch (behaviour) {
+        case "from-corner":
+            return {
+                x: closestToEdges(position.x, 0, rect.width),
+                y: closestToEdges(position.y, 0, rect.height),
+            };
+        case "from-corner-through-center":
+            return {
+                x: closestToEdges(particle.edgesPosition.x, 0, rect.width),
+                y: closestToEdges(particle.edgesPosition.y, 0, rect.height),
+            };
+        case "from-edge":
+            return {
+                x: particle.edgesPosition.x,
+                y: particle.edgesPosition.y,
+            };
+        default:
+            return position;
+    }
+}
 function animate() {
     var rect = ctx.canvas.getBoundingClientRect();
     var timestamp = new Date().getTime() / 1000;
@@ -55,25 +78,16 @@ function animate() {
     if (selectedShapeType === "circle") {
         particles.forEach(function (particle) {
             var radius = particle.radius;
-            var angle = particle.frequency * 2 * Math.PI * timestamp + (particle.phaseLagInRadians || 0);
+            var angle = particle.frequency * 2 * Math.PI * timestamp +
+                (particle.phaseLagInRadians || 0);
             var position = particle.position;
             var newPosition = {
                 x: center.x + Math.sin(angle) * radius,
                 y: center.y + Math.cos(angle) * radius,
             };
             ctx.beginPath();
-            if (selectedShapeBehaviour === "from-corner") {
-                ctx.moveTo(closestToEdges(position.x, 0, rect.width), closestToEdges(position.y, 0, rect.height));
-            }
-            else if (selectedShapeBehaviour === "from-corner-through-center") {
-                ctx.moveTo(closestToEdges(particle.edgesPosition.x, 0, rect.width), closestToEdges(particle.edgesPosition.y, 0, rect.height));
-            }
-            else if (selectedShapeBehaviour === "from-edge") {
-                ctx.moveTo(particle.edgesPosition.x, particle.edgesPosition.y);
-            }
-            else {
-                ctx.moveTo(position.x, position.y);
-            }
+            var startPosition = getStartingPointForBehaviour(selectedShapeBehaviour, particle);
+            ctx.moveTo(startPosition.x, startPosition.y);
             ctx.lineTo(newPosition.x, newPosition.y);
             ctx.lineWidth = particle.lineWidth;
             ctx.strokeStyle = particle.color;
@@ -85,14 +99,17 @@ function animate() {
     else if (selectedShapeType) {
         particles.forEach(function (particle) {
             var radius = particle.radius;
-            var angle = particle.frequency * 2 * Math.PI * timestamp + (particle.phaseLagInRadians || 0);
+            var angle = particle.frequency * 2 * Math.PI * timestamp +
+                (particle.phaseLagInRadians || 0);
             var position = particle.position;
             var newPosition = {
                 x: center.x + Math.cos(angle) * radius,
-                y: center.y + (Math.sin(angle) * Math.cos(angle) * radius) / Math.sqrt(2),
+                y: center.y +
+                    (Math.sin(angle) * Math.cos(angle) * radius) / Math.sqrt(2),
             };
             ctx.beginPath();
-            ctx.moveTo(position.x, position.y);
+            var startPosition = getStartingPointForBehaviour(selectedShapeBehaviour, particle);
+            ctx.moveTo(startPosition.x, startPosition.y);
             ctx.lineTo(newPosition.x, newPosition.y);
             ctx.lineWidth = particle.lineWidth;
             ctx.strokeStyle = particle.color;
