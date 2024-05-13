@@ -15,11 +15,11 @@ export const BALLS_DENSITY = 1;
 
 const backgroundColors: string[] = [
     "lightcyan",
-    // "lightblue",
-    // "rgb(0, 51, 14)",
-    // "rgb(65, 0, 66)",
-    // "#29363C",
-    // "#2B273C"
+    "lightblue",
+    "rgb(0, 51, 14)",
+    "rgb(65, 0, 66)",
+    "#29363C",
+    "#2B273C"
 ]
 
 const backgroundColor = backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
