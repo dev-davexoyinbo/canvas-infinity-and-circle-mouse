@@ -2,6 +2,7 @@ import { canvas, canvasBackgroundRGBA, ctx, rootStyle, } from "./app.js";
 import { closestToEdges, getRandomColor, getRandomEdgePoint, getRandomFloatingNumber, getRandomNumber, setCanvasToFullScreen, } from "./utils.js";
 var selectedShapeType = "circle";
 var selectedShapeBehaviour = "default";
+var particleCount = 30;
 var behaviourRadioButtons = Array.from(document.querySelectorAll('input[name="behaviour"]'));
 behaviourRadioButtons.forEach(function (radio) {
     if (radio.value === selectedShapeBehaviour) {
@@ -28,9 +29,9 @@ var particles = [];
 function initialize() {
     var rect = ctx.canvas.getBoundingClientRect();
     particles = [];
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < particleCount; i++) {
         particles.push({
-            radius: getRandomNumber(150, 250),
+            radius: getRandomNumber(Math.min(150, rect.width * 0.2), Math.min(300, rect.width * 0.5)),
             frequency: getRandomFloatingNumber(0.4, 0.8),
             position: {
                 x: rect.width / 2,

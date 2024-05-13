@@ -27,6 +27,7 @@ type Particle = {
 
 let selectedShapeType = "circle";
 let selectedShapeBehaviour = "default";
+let particleCount = 30;
 
 const behaviourRadioButtons: HTMLInputElement[] = Array.from(
   document.querySelectorAll('input[name="behaviour"]')
@@ -64,9 +65,9 @@ function initialize() {
   const rect = ctx.canvas.getBoundingClientRect();
   particles = [];
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < particleCount; i++) {
     particles.push({
-      radius: getRandomNumber(150, 250),
+      radius: getRandomNumber(Math.min(150, rect.width * 0.2), Math.min(300, rect.width * 0.5)),
       frequency: getRandomFloatingNumber(0.4, 0.8),
       position: {
         x: rect.width / 2,
