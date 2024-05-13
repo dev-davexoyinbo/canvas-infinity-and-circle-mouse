@@ -15,7 +15,6 @@ export const BALLS_DENSITY = 1;
 
 const backgroundColors: string[] = [
     "lightcyan",
-    "lightblue",
     "rgb(0, 51, 14)",
     "rgb(65, 0, 66)",
     "#29363C",
