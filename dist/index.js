@@ -1,7 +1,18 @@
 import { canvas, canvasBackgroundRGBA, ctx, rootStyle, } from "./app.js";
 import { closestToEdges, getRandomColor, getRandomEdgePoint, getRandomFloatingNumber, getRandomNumber, setCanvasToFullScreen, } from "./utils.js";
 var selectedShapeType = "circle";
-var selectedShapeBehaviour = "from-corner";
+var selectedShapeBehaviour = "default";
+var behaviourRadioButtons = Array.from(document.querySelectorAll('input[name="behaviour"]'));
+behaviourRadioButtons.forEach(function (radio) {
+    if (radio.value === selectedShapeBehaviour) {
+        radio.checked = true;
+    }
+    radio.addEventListener("input", function () {
+        if (radio.checked) {
+            selectedShapeBehaviour = radio.value;
+        }
+    });
+});
 var particles = [];
 function initialize() {
     var rect = ctx.canvas.getBoundingClientRect();

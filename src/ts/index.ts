@@ -19,7 +19,6 @@ import {
 type Particle = {
   radius: number;
   frequency: number;
-  // drawable: IDrawable;
   position: Vec;
   edgesPosition: Vec;
   lineWidth: number;
@@ -27,13 +26,23 @@ type Particle = {
   phaseLagInRadians?: number;
 }
 
-// let drawables: {
-//   infinityPath: Particle[];
-//   circlePaths: Particle[];
-// } = { infinityPath: [], circlePaths: [] };
-
 let selectedShapeType = "circle";
-let selectedShapeBehaviour = "from-corner";
+let selectedShapeBehaviour = "default";
+
+const behaviourRadioButtons: HTMLInputElement[] = Array.from(document.querySelectorAll('input[name="behaviour"]'));
+behaviourRadioButtons.forEach((radio) => {
+  if(radio.value === selectedShapeBehaviour) {
+    radio.checked = true;
+  }
+
+  radio.addEventListener("input", () => {
+    if(radio.checked) {
+      selectedShapeBehaviour = radio.value;
+    }
+  })
+})
+
+
 
 let particles: Particle[] = [];
 
