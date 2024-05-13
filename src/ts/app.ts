@@ -1,4 +1,4 @@
-import { getRandomColor, setCanvasToFullScreen } from "./utils.js";
+import { getColorRGBA, getRandomColor, setCanvasToFullScreen } from "./utils.js";
 
 export const rootStyle = document.documentElement;
 export const DEVICE_DPI_RATIO = window.devicePixelRatio || 1;
@@ -12,12 +12,14 @@ export const BALLS_DENSITY = 1;
 
 const backgroundColors: string[] = [
     "lightcyan",
-    "lightblue",
-    "rgb(0, 51, 14)",
-    "rgb(65, 0, 66)",
-    "#29363C",
-    "#2B273C"
+    // "lightblue",
+    // "rgb(0, 51, 14)",
+    // "rgb(65, 0, 66)",
+    // "#29363C",
+    // "#2B273C"
 ]
 
-canvas.style.backgroundColor = backgroundColors[Math.floor(Math.random() * backgroundColors.length)]
+const backgroundColor = backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
+export const canvasBackgroundRGBA = getColorRGBA(backgroundColor)
 
+canvas.style.backgroundColor = backgroundColor;

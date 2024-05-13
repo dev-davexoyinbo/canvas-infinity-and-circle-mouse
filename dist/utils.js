@@ -19,3 +19,18 @@ export function setCanvasSize(canvas, width, height) {
 export function positionWithinBounds(val, min, max) {
     return min <= val && val <= max;
 }
+export function getColorRGBA(color) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, 1, 1);
+    var pixel = ctx.getImageData(0, 0, 1, 1).data;
+    return {
+        r: pixel[0],
+        g: pixel[1],
+        b: pixel[2],
+        a: pixel[3] / 255
+    };
+}

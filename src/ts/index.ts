@@ -1,4 +1,10 @@
-import { BALLS_DENSITY, canvas, ctx, rootStyle } from "./app.js";
+import {
+  BALLS_DENSITY,
+  canvas,
+  canvasBackgroundRGBA,
+  ctx,
+  rootStyle,
+} from "./app.js";
 import { Circle, IDrawable, Vec } from "./models.js";
 import {
   getRandomColor,
@@ -6,64 +12,106 @@ import {
   setCanvasToFullScreen,
 } from "./utils.js";
 
-const drawables: IDrawable[] = [];
+const drawables: {
+  infinityPath: Array<{
+    radius: number;
+    frequency: number;
+    drawable: IDrawable;
+    phaseLagInRadians?: number;
+  }>;
+  circlePaths: Array<{
+    radius: number;
+    frequency: number;
+    drawable: IDrawable;
+    phaseLagInRadians?: number;
+  }>;
+} = { infinityPath: [], circlePaths: [] };
 
 function initialize() {
-  const frictionOnBounce: Vec = { x: 0.05, y: 0.05 };
   const rect = ctx.canvas.getBoundingClientRect();
+  drawables.circlePaths = [];
 
-  const ballCount = Math.floor(
-    (rect.width * rect.height) / BALLS_DENSITY / 10_000
+  drawables.circlePaths.push(
+    {
+      radius: 200,
+      frequency: 0.5,
+      drawable: new Circle({
+        position: {
+          x: rect.width / 2,
+          y: rect.height / 2,
+        },
+        radius: 20,
+        strokeStyle: "black",
+        fillStyle: "black",
+      }),
+    },
+    {
+      radius: 200,
+      frequency: 0.5,
+      phaseLagInRadians: Math.PI,
+      drawable: new Circle({
+        position: {
+          x: rect.width / 2,
+          y: rect.height / 2,
+        },
+        radius: 20,
+        strokeStyle: "black",
+        fillStyle: "red",
+      }),
+    }
   );
 
-  // const ballCount = 1
-
-  if (ballCount > drawables.length) {
-    for (let i = 0; i < ballCount - drawables.length; i++) {
-      const radius = getRandomNumber(20, 70);
-      const position: Vec = {
-        x: getRandomNumber(radius, rect.width - radius),
-        y: getRandomNumber(radius, rect.height * 0.97 - radius),
-      };
-      const velocity: Vec = {
-        x: getRandomNumber(-70, 70),
-        y: getRandomNumber(-70, 70),
-      };
-      const color = getRandomColor();
-
-      drawables.push(
-        new Circle({
-          position,
-          velocity,
-          acceleration: { x: 0, y: 1000 },
-          radius,
-          frictionOnBounce,
-          strokeStyle: color,
-          fillStyle: color,
-          keepWithinContextBounds: true,
-        })
-      );
-    }
-  } else {
-    const deleteCount = drawables.length - ballCount;
-    drawables.splice(drawables.length - deleteCount, drawables.length);
-  }
+  drawables.infinityPath.push({
+    radius: 200,
+    frequency: 0.5,
+    drawable: new Circle({
+      position: {
+        x: rect.width / 2,
+        y: rect.height / 2,
+      },
+      radius: 20,
+      strokeStyle: "black",
+      fillStyle: "green",
+    }),
+  });
 } //end initialize
 
-function joltBalls() {
-  drawables.forEach((drawable) => {
-    drawable.velocity = {
-      x: getRandomNumber(-1000, 1000),
-      y: getRandomNumber(500, 4_000),
-    };
-  });
-}
-
 function animate() {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  const rect = ctx.canvas.getBoundingClientRect();
+  const timestamp = new Date().getTime() / 1000;
+  const center: Vec = {
+    x: rect.width / 2,
+    y: rect.height / 2,
+  };
+  const { r, g, b } = canvasBackgroundRGBA;
+  ctx.fillStyle = `rgba(${r},${g}, ${b}, 0.1)`;
+  ctx.fillRect(0, 0, rect.width, rect.height);
 
-  drawables.forEach((drawable) => {
-    drawable.draw(ctx);
+  // Circles
+  drawables.circlePaths.forEach((el) => {
+    const radius = el.radius;
+    const angle =
+      el.frequency * 2 * Math.PI * timestamp + (el.phaseLagInRadians || 0);
+
+    el.drawable.position = {
+      x: center.x + Math.sin(angle) * radius,
+      y: center.y + Math.cos(angle) * radius,
+    };
+
+    el.drawable.draw(ctx);
+  });
+
+  // Infinity path
+  drawables.infinityPath.forEach((el) => {
+    const radius = el.radius;
+    const angle =
+      el.frequency * 2 * Math.PI * timestamp + (el.phaseLagInRadians || 0);
+
+    el.drawable.position = {
+      x: center.x + Math.cos(angle) * radius ,
+      y: center.y + Math.sin(angle) * Math.cos(angle) * radius / Math.sqrt(2),
+    };
+    el.drawable.draw(ctx);
   });
 
   requestAnimationFrame(animate);
@@ -74,10 +122,6 @@ window.addEventListener("resize", () => {
   setCanvasToFullScreen(canvas);
   initialize();
 });
-
-window.addEventListener("click", () => {
-  joltBalls();
-})
 
 setCanvasToFullScreen(canvas);
 
