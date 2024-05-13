@@ -4,6 +4,10 @@ export function getRandomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+export function getRandomFloatingNumber(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}
+
 export function getRandomColor(options?: {solid?: boolean}) {
   return `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(
     Math.random() * 256

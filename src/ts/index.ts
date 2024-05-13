@@ -8,11 +8,12 @@ import {
 import { Circle, IDrawable, Vec } from "./models.js";
 import {
   getRandomColor,
+  getRandomFloatingNumber,
   getRandomNumber,
   setCanvasToFullScreen,
 } from "./utils.js";
 
-const drawables: {
+let drawables: {
   infinityPath: Array<{
     radius: number;
     frequency: number;
@@ -29,51 +30,42 @@ const drawables: {
 
 function initialize() {
   const rect = ctx.canvas.getBoundingClientRect();
-  drawables.circlePaths = [];
+  drawables = { infinityPath: [], circlePaths: [] };
 
-  drawables.circlePaths.push(
-    {
-      radius: 200,
-      frequency: 0.5,
-      drawable: new Circle({
-        position: {
-          x: rect.width / 2,
-          y: rect.height / 2,
-        },
-        radius: 20,
-        strokeStyle: "black",
-        fillStyle: "black",
-      }),
-    },
-    {
-      radius: 200,
-      frequency: 0.5,
-      phaseLagInRadians: Math.PI,
-      drawable: new Circle({
-        position: {
-          x: rect.width / 2,
-          y: rect.height / 2,
-        },
-        radius: 20,
-        strokeStyle: "black",
-        fillStyle: "red",
-      }),
-    }
-  );
-
-  drawables.infinityPath.push({
-    radius: 200,
-    frequency: 0.5,
-    drawable: new Circle({
-      position: {
-        x: rect.width / 2,
-        y: rect.height / 2,
+  for(let i = 0; i < 2; i++) {
+    drawables.circlePaths.push(
+      {
+        radius: getRandomNumber(150, 250),
+        frequency: getRandomFloatingNumber(0.5, 2),
+        // frequency: getRandomFloatingNumber(0.5, 2),
+        drawable: new Circle({
+          position: {
+            x: rect.width / 2,
+            y: rect.height / 2,
+          },
+          radius: getRandomNumber(3,8),
+          strokeStyle: "transparent",
+          fillStyle: getRandomColor({ solid: true }),
+        }),
       },
-      radius: 20,
-      strokeStyle: "black",
-      fillStyle: "green",
-    }),
-  });
+    );
+  }
+
+  
+
+  // drawables.infinityPath.push({
+  //   radius: 200,
+  //   frequency: 0.5,
+  //   drawable: new Circle({
+  //     position: {
+  //       x: rect.width / 2,
+  //       y: rect.height / 2,
+  //     },
+  //     radius: 20,
+  //     strokeStyle: "black",
+  //     fillStyle: "green",
+  //   }),
+  // });
 } //end initialize
 
 function animate() {
