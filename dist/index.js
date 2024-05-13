@@ -12,6 +12,7 @@ var lastCenter = {
     y: undefined,
 };
 var behaviourRadioButtons = Array.from(document.querySelectorAll('input[name="behaviour"]'));
+var initialTimestamp = new Date().getTime() / 1000;
 behaviourRadioButtons.forEach(function (radio) {
     if (radio.value === selectedShapeBehaviour) {
         radio.checked = true;
@@ -100,10 +101,49 @@ function animate() {
             var radius = particle.radius;
             var angle = particle.frequency * 2 * Math.PI * timestamp +
                 (particle.phaseLagInRadians || 0);
-            var position = particle.position;
             var newPosition = {
                 x: center.x + Math.sin(angle) * radius,
                 y: center.y + Math.cos(angle) * radius,
+            };
+            ctx.beginPath();
+            var startPosition = getStartingPointForBehaviour(selectedShapeBehaviour, particle);
+            ctx.moveTo(startPosition.x, startPosition.y);
+            ctx.lineTo(newPosition.x, newPosition.y);
+            ctx.lineWidth = particle.lineWidth;
+            ctx.strokeStyle = particle.color;
+            ctx.lineCap = "round";
+            ctx.stroke();
+            particle.position = newPosition;
+        });
+    }
+    else if (selectedShapeType == "black-hole") {
+        particles.forEach(function (particle) {
+            var radius = particle.radius;
+            var angle = particle.frequency * 2 * Math.PI * (timestamp - initialTimestamp) +
+                (particle.phaseLagInRadians || 0);
+            var newPosition = {
+                x: center.x + (radius + Math.tan(angle)) * Math.sin(angle),
+                y: center.y + (radius + Math.tan(angle)) * Math.cos(angle),
+            };
+            ctx.beginPath();
+            var startPosition = getStartingPointForBehaviour(selectedShapeBehaviour, particle);
+            ctx.moveTo(startPosition.x, startPosition.y);
+            ctx.lineTo(newPosition.x, newPosition.y);
+            ctx.lineWidth = particle.lineWidth;
+            ctx.strokeStyle = particle.color;
+            ctx.lineCap = "round";
+            ctx.stroke();
+            particle.position = newPosition;
+        });
+    }
+    else if (selectedShapeType == "hour-glass") {
+        particles.forEach(function (particle) {
+            var radius = particle.radius;
+            var angle = particle.frequency * 2 * Math.PI * (timestamp - initialTimestamp) +
+                (particle.phaseLagInRadians || 0);
+            var newPosition = {
+                x: center.x + (radius * Math.tan(angle)) * Math.sin(angle),
+                y: center.y + (radius * Math.tan(angle)) * Math.cos(angle),
             };
             ctx.beginPath();
             var startPosition = getStartingPointForBehaviour(selectedShapeBehaviour, particle);

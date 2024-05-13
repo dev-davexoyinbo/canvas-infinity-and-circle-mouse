@@ -41,6 +41,8 @@ const lastCenter: Vec | { x: undefined | number; y: undefined | number } = {
 const behaviourRadioButtons: HTMLInputElement[] = Array.from(
   document.querySelectorAll('input[name="behaviour"]')
 );
+const initialTimestamp = new Date().getTime() / 1000;
+
 behaviourRadioButtons.forEach((radio) => {
   if (radio.value === selectedShapeBehaviour) {
     radio.checked = true;
@@ -156,7 +158,6 @@ function animate() {
         particle.frequency * 2 * Math.PI * timestamp +
         (particle.phaseLagInRadians || 0);
 
-      const position = particle.position;
       const newPosition = {
         x: center.x + Math.sin(angle) * radius,
         y: center.y + Math.cos(angle) * radius,
@@ -175,7 +176,57 @@ function animate() {
 
       particle.position = newPosition;
     });
-  } else if (selectedShapeType) {
+  } else if(selectedShapeType == "black-hole") {
+    particles.forEach((particle) => {
+      const radius = particle.radius;
+      const angle =
+        particle.frequency * 2 * Math.PI * (timestamp - initialTimestamp) +
+        (particle.phaseLagInRadians || 0);
+
+      const newPosition = {
+        x: center.x + (radius + Math.tan(angle)) * Math.sin(angle),
+        y: center.y + (radius + Math.tan(angle)) * Math.cos(angle),
+      };
+      ctx.beginPath();
+      const startPosition = getStartingPointForBehaviour(
+        selectedShapeBehaviour,
+        particle
+      );
+      ctx.moveTo(startPosition.x, startPosition.y);
+      ctx.lineTo(newPosition.x, newPosition.y);
+      ctx.lineWidth = particle.lineWidth;
+      ctx.strokeStyle = particle.color;
+      ctx.lineCap = "round";
+      ctx.stroke();
+
+      particle.position = newPosition;
+    });
+  } else if(selectedShapeType == "hour-glass") {
+    particles.forEach((particle) => {
+      const radius = particle.radius;
+      const angle =
+        particle.frequency * 2 * Math.PI * (timestamp - initialTimestamp) +
+        (particle.phaseLagInRadians || 0);
+
+      const newPosition = {
+        x: center.x + (radius * Math.tan(angle)) * Math.sin(angle),
+        y: center.y + (radius * Math.tan(angle)) * Math.cos(angle),
+      };
+      ctx.beginPath();
+      const startPosition = getStartingPointForBehaviour(
+        selectedShapeBehaviour,
+        particle
+      );
+      ctx.moveTo(startPosition.x, startPosition.y);
+      ctx.lineTo(newPosition.x, newPosition.y);
+      ctx.lineWidth = particle.lineWidth;
+      ctx.strokeStyle = particle.color;
+      ctx.lineCap = "round";
+      ctx.stroke();
+
+      particle.position = newPosition;
+    });
+  }else if (selectedShapeType) {
     // Infinity path
     particles.forEach((particle) => {
       const radius = particle.radius;
