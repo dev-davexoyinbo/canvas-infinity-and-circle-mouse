@@ -40,6 +40,19 @@ behaviourRadioButtons.forEach((radio) => {
       selectedShapeBehaviour = radio.value;
     }
   })
+});
+
+const shapeRadioButtons: HTMLInputElement[] = Array.from(document.querySelectorAll('input[name="shape"]'));
+shapeRadioButtons.forEach((radio) => {
+  if(radio.value === selectedShapeType) {
+    radio.checked = true;
+  }
+
+  radio.addEventListener("input", () => {
+    if(radio.checked) {
+      selectedShapeType = radio.value;
+    }
+  })
 })
 
 

@@ -13,6 +13,17 @@ behaviourRadioButtons.forEach(function (radio) {
         }
     });
 });
+var shapeRadioButtons = Array.from(document.querySelectorAll('input[name="shape"]'));
+shapeRadioButtons.forEach(function (radio) {
+    if (radio.value === selectedShapeType) {
+        radio.checked = true;
+    }
+    radio.addEventListener("input", function () {
+        if (radio.checked) {
+            selectedShapeType = radio.value;
+        }
+    });
+});
 var particles = [];
 function initialize() {
     var rect = ctx.canvas.getBoundingClientRect();

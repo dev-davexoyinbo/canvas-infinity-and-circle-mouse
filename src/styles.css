@@ -103,6 +103,9 @@ html,
     transform: translateX(-50%);
     box-shadow: 1px 1px 5px 0px rgb(131 131 131 / 22%);
     padding: 1rem;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    gap:1rem;
 }
 
 .settings-container label {
