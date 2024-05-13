@@ -7,6 +7,8 @@ export const canvas: HTMLCanvasElement = document.querySelector(
 ) as HTMLCanvasElement;
 export const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
+export const SHAPE_TYPES = ["infinity", "circle"];
+
 // number of balls per 10_000 pixels square, ie 100px x 100px
 export const BALLS_DENSITY = 1;
 

@@ -1,11 +1,12 @@
 import { canvas, canvasBackgroundRGBA, ctx, rootStyle, } from "./app.js";
 import { getRandomColor, getRandomFloatingNumber, getRandomNumber, setCanvasToFullScreen, } from "./utils.js";
-var drawables = { infinityPath: [], circlePaths: [] };
+var selectedShapeType = "circle";
+var particles = [];
 function initialize() {
     var rect = ctx.canvas.getBoundingClientRect();
-    drawables = { infinityPath: [], circlePaths: [] };
+    particles = [];
     for (var i = 0; i < 20; i++) {
-        drawables.circlePaths.push({
+        particles.push({
             radius: getRandomNumber(150, 250),
             frequency: getRandomFloatingNumber(0.4, 0.8),
             position: {
@@ -27,32 +28,44 @@ function animate() {
     var r = canvasBackgroundRGBA.r, g = canvasBackgroundRGBA.g, b = canvasBackgroundRGBA.b;
     ctx.fillStyle = "rgba(".concat(r, ",").concat(g, ", ").concat(b, ", 0.1)");
     ctx.fillRect(0, 0, rect.width, rect.height);
-    drawables.circlePaths.forEach(function (el) {
-        var radius = el.radius;
-        var angle = el.frequency * 2 * Math.PI * timestamp + (el.phaseLagInRadians || 0);
-        var position = el.position;
-        var newPosition = {
-            x: center.x + Math.sin(angle) * radius,
-            y: center.y + Math.cos(angle) * radius,
-        };
-        ctx.beginPath();
-        ctx.moveTo(position.x, position.y);
-        ctx.lineTo(newPosition.x, newPosition.y);
-        ctx.lineWidth = el.lineWidth;
-        ctx.strokeStyle = el.color;
-        ctx.lineCap = "round";
-        ctx.stroke();
-        el.position = newPosition;
-    });
-    drawables.infinityPath.forEach(function (el) {
-        var radius = el.radius;
-        var angle = el.frequency * 2 * Math.PI * timestamp + (el.phaseLagInRadians || 0);
-        el.drawable.position = {
-            x: center.x + Math.cos(angle) * radius,
-            y: center.y + (Math.sin(angle) * Math.cos(angle) * radius) / Math.sqrt(2),
-        };
-        el.drawable.draw(ctx);
-    });
+    if (selectedShapeType === "circle") {
+        particles.forEach(function (particle) {
+            var radius = particle.radius;
+            var angle = particle.frequency * 2 * Math.PI * timestamp + (particle.phaseLagInRadians || 0);
+            var position = particle.position;
+            var newPosition = {
+                x: center.x + Math.sin(angle) * radius,
+                y: center.y + Math.cos(angle) * radius,
+            };
+            ctx.beginPath();
+            ctx.moveTo(position.x, position.y);
+            ctx.lineTo(newPosition.x, newPosition.y);
+            ctx.lineWidth = particle.lineWidth;
+            ctx.strokeStyle = particle.color;
+            ctx.lineCap = "round";
+            ctx.stroke();
+            particle.position = newPosition;
+        });
+    }
+    else if (selectedShapeType) {
+        particles.forEach(function (particle) {
+            var radius = particle.radius;
+            var angle = particle.frequency * 2 * Math.PI * timestamp + (particle.phaseLagInRadians || 0);
+            var position = particle.position;
+            var newPosition = {
+                x: center.x + Math.cos(angle) * radius,
+                y: center.y + (Math.sin(angle) * Math.cos(angle) * radius) / Math.sqrt(2),
+            };
+            ctx.beginPath();
+            ctx.moveTo(position.x, position.y);
+            ctx.lineTo(newPosition.x, newPosition.y);
+            ctx.lineWidth = particle.lineWidth;
+            ctx.strokeStyle = particle.color;
+            ctx.lineCap = "round";
+            ctx.stroke();
+            particle.position = newPosition;
+        });
+    }
     requestAnimationFrame(animate);
 }
 window.addEventListener("resize", function () {
