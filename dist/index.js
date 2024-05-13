@@ -1,6 +1,7 @@
 import { canvas, canvasBackgroundRGBA, ctx, rootStyle, } from "./app.js";
-import { getRandomColor, getRandomFloatingNumber, getRandomNumber, setCanvasToFullScreen, } from "./utils.js";
+import { closestToEdges, getRandomColor, getRandomEdgePoint, getRandomFloatingNumber, getRandomNumber, setCanvasToFullScreen, } from "./utils.js";
 var selectedShapeType = "circle";
+var selectedShapeBehaviour = "from-corner";
 var particles = [];
 function initialize() {
     var rect = ctx.canvas.getBoundingClientRect();
@@ -13,6 +14,7 @@ function initialize() {
                 x: rect.width / 2,
                 y: rect.height / 2,
             },
+            edgesPosition: getRandomEdgePoint(0, 0, rect.width, rect.height),
             lineWidth: getRandomNumber(2, 4),
             color: getRandomColor({ solid: true }),
         });
@@ -38,7 +40,18 @@ function animate() {
                 y: center.y + Math.cos(angle) * radius,
             };
             ctx.beginPath();
-            ctx.moveTo(position.x, position.y);
+            if (selectedShapeBehaviour === "from-corner") {
+                ctx.moveTo(closestToEdges(position.x, 0, rect.width), closestToEdges(position.y, 0, rect.height));
+            }
+            else if (selectedShapeBehaviour === "from-corner-through-center") {
+                ctx.moveTo(closestToEdges(particle.edgesPosition.x, 0, rect.width), closestToEdges(particle.edgesPosition.y, 0, rect.height));
+            }
+            else if (selectedShapeBehaviour === "from-edge") {
+                ctx.moveTo(particle.edgesPosition.x, particle.edgesPosition.y);
+            }
+            else {
+                ctx.moveTo(position.x, position.y);
+            }
             ctx.lineTo(newPosition.x, newPosition.y);
             ctx.lineWidth = particle.lineWidth;
             ctx.strokeStyle = particle.color;

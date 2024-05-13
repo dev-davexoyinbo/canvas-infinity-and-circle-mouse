@@ -7,7 +7,9 @@ import {
 } from "./app.js";
 import { Circle, IDrawable, Vec } from "./models.js";
 import {
+  closestToEdges,
   getRandomColor,
+  getRandomEdgePoint,
   getRandomFloatingNumber,
   getRandomNumber,
   setCanvasToFullScreen,
@@ -19,6 +21,7 @@ type Particle = {
   frequency: number;
   // drawable: IDrawable;
   position: Vec;
+  edgesPosition: Vec;
   lineWidth: number;
   color: string;
   phaseLagInRadians?: number;
@@ -29,26 +32,14 @@ type Particle = {
 //   circlePaths: Particle[];
 // } = { infinityPath: [], circlePaths: [] };
 
-const selectedShapeType = "circle";
+let selectedShapeType = "circle";
+let selectedShapeBehaviour = "from-corner";
 
 let particles: Particle[] = [];
 
 function initialize() {
   const rect = ctx.canvas.getBoundingClientRect();
   particles = [];
-
-  // for (let i = 0; i < 20; i++) {
-  //   drawables.circlePaths.push({
-  //     radius: getRandomNumber(150, 250),
-  //     frequency: getRandomFloatingNumber(0.4, 0.8),
-  //     position: {
-  //       x: rect.width / 2,
-  //       y: rect.height / 2,
-  //     },
-  //     lineWidth: getRandomNumber(2, 4),
-  //     color: getRandomColor({ solid: true }),
-  //   });
-  // }
 
   for (let i = 0; i < 20; i++) {
     particles.push({
@@ -58,6 +49,7 @@ function initialize() {
         x: rect.width / 2,
         y: rect.height / 2,
       },
+      edgesPosition: getRandomEdgePoint(0, 0, rect.width, rect.height),
       lineWidth: getRandomNumber(2, 4),
       color: getRandomColor({ solid: true }),
     });
@@ -89,7 +81,18 @@ function animate() {
         y: center.y + Math.cos(angle) * radius,
       };
       ctx.beginPath();
-      ctx.moveTo(position.x, position.y);
+      if(selectedShapeBehaviour === "from-corner") {
+        ctx.moveTo(closestToEdges(position.x, 0, rect.width), closestToEdges(position.y, 0, rect.height));
+      }
+      else if(selectedShapeBehaviour === "from-corner-through-center") {
+        ctx.moveTo(closestToEdges(particle.edgesPosition.x, 0, rect.width), closestToEdges(particle.edgesPosition.y, 0, rect.height));
+      }
+      else if(selectedShapeBehaviour === "from-edge") {
+        ctx.moveTo(particle.edgesPosition.x, particle.edgesPosition.y);
+      }
+      else {
+        ctx.moveTo(position.x, position.y);
+      }
       ctx.lineTo(newPosition.x, newPosition.y);
       ctx.lineWidth = particle.lineWidth;
       ctx.strokeStyle = particle.color;

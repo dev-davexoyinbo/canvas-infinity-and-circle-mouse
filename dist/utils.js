@@ -37,3 +37,39 @@ export function getColorRGBA(color) {
         a: pixel[3] / 255
     };
 }
+export function closestToEdges(position, edgeA, edgeB) {
+    var distanceToA = Math.abs(position - edgeA);
+    var distanceToB = Math.abs(position - edgeB);
+    if (distanceToA < distanceToB) {
+        return edgeA;
+    }
+    else {
+        return edgeB;
+    }
+}
+export function getRandomEdgePoint(xMin, yMin, width, height) {
+    var edge = Math.floor(Math.random() * 4) + 1;
+    switch (edge) {
+        case 1:
+            return {
+                x: Math.floor(Math.random() * width) + xMin,
+                y: yMin,
+            };
+        case 2:
+            return {
+                x: xMin + width - 1,
+                y: Math.floor(Math.random() * height) + yMin,
+            };
+        case 3:
+            return {
+                x: Math.floor(Math.random() * width) + xMin,
+                y: yMin + height - 1,
+            };
+        case 4:
+        default:
+            return {
+                x: xMin,
+                y: Math.floor(Math.random() * height) + yMin,
+            };
+    }
+}
