@@ -4,15 +4,15 @@ var drawables = { infinityPath: [], circlePaths: [] };
 function initialize() {
     var rect = ctx.canvas.getBoundingClientRect();
     drawables = { infinityPath: [], circlePaths: [] };
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 2; i++) {
         drawables.circlePaths.push({
             radius: getRandomNumber(150, 250),
-            frequency: getRandomFloatingNumber(0.4, 0.8),
+            frequency: getRandomFloatingNumber(0.5, 2),
             position: {
-                x: rect.width / 2,
-                y: rect.height / 2,
+                x: 0,
+                y: 0,
             },
-            lineWidth: getRandomNumber(2, 4),
+            lineWidth: getRandomNumber(3, 8),
             color: getRandomColor({ solid: true }),
         });
     }
@@ -38,11 +38,7 @@ function animate() {
         ctx.beginPath();
         ctx.moveTo(position.x, position.y);
         ctx.lineTo(newPosition.x, newPosition.y);
-        ctx.lineWidth = el.lineWidth;
-        ctx.strokeStyle = el.color;
-        ctx.lineCap = "round";
         ctx.stroke();
-        el.position = newPosition;
     });
     drawables.infinityPath.forEach(function (el) {
         var radius = el.radius;

@@ -193,3 +193,55 @@ export class Circle extends IDrawable {
     ctx.stroke();
   }
 }
+
+
+// export type LineSegmentInitializer = {
+//   position?: Vec;
+//   velocity?: Vec;
+//   acceleration?: Vec;
+//   frictionOnBounce?: Vec;
+//   radius: number;
+//   strokeStyle?: string | CanvasGradient | CanvasPattern;
+//   fillStyle?: string | CanvasGradient | CanvasPattern;
+//   keepWithinContextBounds?: boolean;
+// };
+
+// export class LineSegment extends IDrawable {
+//   position: Vec;
+//   velocity: Vec;
+//   acceleration: Vec;
+//   radius: number;
+//   strokeStyle: string | CanvasGradient | CanvasPattern;
+//   fillStyle: string | CanvasGradient | CanvasPattern;
+
+//   constructor({
+//     position,
+//     velocity,
+//     acceleration,
+//     radius,
+//     strokeStyle,
+//     fillStyle,
+//     keepWithinContextBounds,
+//     frictionOnBounce,
+//   }: LineSegmentInitializer) {
+//     super();
+//     this.frictionOnBounce = frictionOnBounce || { x: 0, y: 0 };
+//     this.position = position || { x: 0, y: 0 };
+//     this.velocity = velocity || { x: 0, y: 0 };
+//     this.acceleration = acceleration || { x: 0, y: 0 };
+//     this.radius = radius;
+//     this.strokeStyle = strokeStyle || "black";
+//     this.fillStyle = fillStyle || "white";
+//     this.keepWithinContextBounds = keepWithinContextBounds || false;
+//     this.particleOffset = { x: radius, y: radius };
+//   }
+
+//   protected _draw(ctx: CanvasRenderingContext2D): void {
+//     ctx.beginPath();
+//     ctx.fillStyle = this.fillStyle;
+//     ctx.strokeStyle = this.strokeStyle;
+//     ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+//     ctx.fill();
+//     ctx.stroke();
+//   }
+// }

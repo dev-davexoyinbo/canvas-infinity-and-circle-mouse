@@ -23,7 +23,10 @@ let drawables: {
   circlePaths: Array<{
     radius: number;
     frequency: number;
-    drawable: IDrawable;
+    // drawable: IDrawable;
+    position: Vec;
+    lineWidth: number;
+    color: string;
     phaseLagInRadians?: number;
   }>;
 } = { infinityPath: [], circlePaths: [] };
@@ -32,26 +35,18 @@ function initialize() {
   const rect = ctx.canvas.getBoundingClientRect();
   drawables = { infinityPath: [], circlePaths: [] };
 
-  for(let i = 0; i < 2; i++) {
-    drawables.circlePaths.push(
-      {
-        radius: getRandomNumber(150, 250),
-        frequency: getRandomFloatingNumber(0.5, 2),
-        // frequency: getRandomFloatingNumber(0.5, 2),
-        drawable: new Circle({
-          position: {
-            x: rect.width / 2,
-            y: rect.height / 2,
-          },
-          radius: getRandomNumber(3,8),
-          strokeStyle: "transparent",
-          fillStyle: getRandomColor({ solid: true }),
-        }),
+  for (let i = 0; i < 20; i++) {
+    drawables.circlePaths.push({
+      radius: getRandomNumber(150, 250),
+      frequency: getRandomFloatingNumber(0.4, 0.8),
+      position: {
+        x: rect.width / 2,
+        y: rect.height / 2,
       },
-    );
+      lineWidth: getRandomNumber(2, 4),
+      color: getRandomColor({ solid: true }),
+    });
   }
-
-  
 
   // drawables.infinityPath.push({
   //   radius: 200,
@@ -85,12 +80,20 @@ function animate() {
     const angle =
       el.frequency * 2 * Math.PI * timestamp + (el.phaseLagInRadians || 0);
 
-    el.drawable.position = {
+    const position = el.position;
+    const newPosition = {
       x: center.x + Math.sin(angle) * radius,
       y: center.y + Math.cos(angle) * radius,
     };
+    ctx.beginPath();
+    ctx.moveTo(position.x, position.y);
+    ctx.lineTo(newPosition.x, newPosition.y);
+    ctx.lineWidth = el.lineWidth;
+    ctx.strokeStyle = el.color;
+    ctx.lineCap = "round";
+    ctx.stroke();
 
-    el.drawable.draw(ctx);
+    el.position = newPosition;
   });
 
   // Infinity path
@@ -100,8 +103,8 @@ function animate() {
       el.frequency * 2 * Math.PI * timestamp + (el.phaseLagInRadians || 0);
 
     el.drawable.position = {
-      x: center.x + Math.cos(angle) * radius ,
-      y: center.y + Math.sin(angle) * Math.cos(angle) * radius / Math.sqrt(2),
+      x: center.x + Math.cos(angle) * radius,
+      y: center.y + (Math.sin(angle) * Math.cos(angle) * radius) / Math.sqrt(2),
     };
     el.drawable.draw(ctx);
   });
