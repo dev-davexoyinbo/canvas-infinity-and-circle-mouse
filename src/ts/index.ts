@@ -29,6 +29,15 @@ let selectedShapeType = "circle";
 let selectedShapeBehaviour = "default";
 let particleCount = 30;
 
+const mousePosition: Vec | { x: undefined | number; y: undefined | number } = {
+  x: undefined,
+  y: undefined,
+};
+const lastCenter: Vec | { x: undefined | number; y: undefined | number } = {
+  x: undefined,
+  y: undefined,
+};
+
 const behaviourRadioButtons: HTMLInputElement[] = Array.from(
   document.querySelectorAll('input[name="behaviour"]')
 );
@@ -67,7 +76,10 @@ function initialize() {
 
   for (let i = 0; i < particleCount; i++) {
     particles.push({
-      radius: getRandomNumber(Math.min(150, rect.width * 0.2), Math.min(300, rect.width * 0.5)),
+      radius: getRandomNumber(
+        Math.min(150, rect.width * 0.2),
+        Math.min(300, rect.width * 0.5)
+      ),
       frequency: getRandomFloatingNumber(0.4, 0.8),
       position: {
         x: rect.width / 2,
@@ -111,10 +123,27 @@ function getStartingPointForBehaviour(
 function animate() {
   const rect = ctx.canvas.getBoundingClientRect();
   const timestamp = new Date().getTime() / 1000;
+
   const center: Vec = {
     x: rect.width / 2,
     y: rect.height / 2,
   };
+
+  if (lastCenter.x === undefined || lastCenter.y === undefined) {
+    lastCenter.x = center.x;
+    lastCenter.y = center.y;
+    // Object.assign(center, lastCenter);
+  }
+
+  if (mousePosition.x !== undefined && mousePosition.y !== undefined) {
+    Object.assign(center, {
+      x: lastCenter.x + (mousePosition.x - lastCenter.x) / 10,
+      y: lastCenter.y + (mousePosition.y - lastCenter.y) / 10,
+    });
+  }
+
+  Object.assign(lastCenter, center);
+
   const { r, g, b } = canvasBackgroundRGBA;
   ctx.fillStyle = `rgba(${r},${g}, ${b}, 0.1)`;
   ctx.fillRect(0, 0, rect.width, rect.height);
@@ -184,6 +213,29 @@ window.addEventListener("resize", () => {
   rootStyle.style.setProperty("--viewport-height", `${window.innerHeight}px`);
   setCanvasToFullScreen(canvas);
   initialize();
+});
+
+window.addEventListener("mousemove", (event) => {
+  const path = event.composedPath();
+
+  if (path.some((el) => el == canvas)) {
+    Object.assign(mousePosition, {
+      x: event.clientX,
+      y: event.clientY,
+    });
+  } else {
+    Object.assign(mousePosition, {
+      x: undefined,
+      y: undefined,
+    });
+  }
+});
+
+canvas.addEventListener("mouseleave", () => {
+  Object.assign(mousePosition, {
+    x: undefined,
+    y: undefined,
+  });
 });
 
 setCanvasToFullScreen(canvas);

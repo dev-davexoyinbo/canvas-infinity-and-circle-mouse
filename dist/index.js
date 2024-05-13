@@ -3,6 +3,14 @@ import { closestToEdges, getRandomColor, getRandomEdgePoint, getRandomFloatingNu
 var selectedShapeType = "circle";
 var selectedShapeBehaviour = "default";
 var particleCount = 30;
+var mousePosition = {
+    x: undefined,
+    y: undefined,
+};
+var lastCenter = {
+    x: undefined,
+    y: undefined,
+};
 var behaviourRadioButtons = Array.from(document.querySelectorAll('input[name="behaviour"]'));
 behaviourRadioButtons.forEach(function (radio) {
     if (radio.value === selectedShapeBehaviour) {
@@ -73,6 +81,17 @@ function animate() {
         x: rect.width / 2,
         y: rect.height / 2,
     };
+    if (lastCenter.x === undefined || lastCenter.y === undefined) {
+        lastCenter.x = center.x;
+        lastCenter.y = center.y;
+    }
+    if (mousePosition.x !== undefined && mousePosition.y !== undefined) {
+        Object.assign(center, {
+            x: lastCenter.x + (mousePosition.x - lastCenter.x) / 10,
+            y: lastCenter.y + (mousePosition.y - lastCenter.y) / 10,
+        });
+    }
+    Object.assign(lastCenter, center);
     var r = canvasBackgroundRGBA.r, g = canvasBackgroundRGBA.g, b = canvasBackgroundRGBA.b;
     ctx.fillStyle = "rgba(".concat(r, ",").concat(g, ", ").concat(b, ", 0.1)");
     ctx.fillRect(0, 0, rect.width, rect.height);
@@ -125,6 +144,27 @@ window.addEventListener("resize", function () {
     rootStyle.style.setProperty("--viewport-height", "".concat(window.innerHeight, "px"));
     setCanvasToFullScreen(canvas);
     initialize();
+});
+window.addEventListener("mousemove", function (event) {
+    var path = event.composedPath();
+    if (path.some(function (el) { return el == canvas; })) {
+        Object.assign(mousePosition, {
+            x: event.clientX,
+            y: event.clientY,
+        });
+    }
+    else {
+        Object.assign(mousePosition, {
+            x: undefined,
+            y: undefined,
+        });
+    }
+});
+canvas.addEventListener("mouseleave", function () {
+    Object.assign(mousePosition, {
+        x: undefined,
+        y: undefined,
+    });
 });
 setCanvasToFullScreen(canvas);
 initialize();
